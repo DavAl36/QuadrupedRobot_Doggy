@@ -2,24 +2,22 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
 
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 
 void up(void);
-void down(void);
+
 void backward_motion(void);
- void direct_kinematic(double alpha, double gamma, double beta, double* x, double* y, double* z );
+void direct_kinematic(double alpha, double gamma, double beta, double* x, double* y, double* z );
 void inverse_kinematic(double x, double y, double z, double* alpha, double* beta, double* gamma );
 
 void front_right(double x,double y);
 void front_left(double x,double y);
 void rear_right(double x,double y);
 void rear_left(double x,double y);
-void test_leg_1(void);
-void test_leg_2(byte timing);
+
 void forward_motion(void);
 void backward_motion(void);
-void turn_clockwise_motion(void);
-void turn_counterclockwise_motion(void);
+
 #define ROWS 2
 #define COLS 40
 void LinearCartesianPath(double x1, double y1, double x2, double y2,double x3, double y3, double x4, double y4, double traj[ROWS][COLS]);
@@ -39,58 +37,28 @@ double path_1[ROWS][COLS];
 
   
 void setup() {
-  Serial.begin(9600);
 
   pwm.begin();
   pwm.setPWMFreq(60);  
 
-  delay(1000);
-
-   pwm.setPWM(8, 0, angleToPulse(140,0,420) ); 
-   pwm.setPWM(12, 0, angleToPulse(140,0,420) );
-   pwm.setPWM(0, 0, angleToPulse(115,0,420) );
-   pwm.setPWM(4, 0, angleToPulse(115,0,420) );   
-   front_right(0,6);
-   front_left( 0,6);
-   rear_right( 0,11);
-   rear_left(  0,11);
-   delay(1000);
-   up();
-   delay(1000);
-   front_right(0,11);
-   front_left( 0,11);
-   rear_right( 0,6);
-   rear_left(  0,6);
-   delay(1000);
-   up();
-   delay(1000);
-   pwm.setPWM(8, 0, angleToPulse(120,0,420) ); 
-   pwm.setPWM(12, 0, angleToPulse(110,0,420) );
-   pwm.setPWM(0, 0, angleToPulse(150,0,420) );
-   pwm.setPWM(4, 0, angleToPulse(140,0,420) );
-   delay(1000);
-   pwm.setPWM(8, 0, angleToPulse(160,0,420) ); 
-   pwm.setPWM(12, 0, angleToPulse(160,0,420) );
-   pwm.setPWM(0, 0, angleToPulse(100,0,420) );
-   pwm.setPWM(4, 0, angleToPulse(90,0,420) );
-   delay(1000);
-   pwm.setPWM(8, 0, angleToPulse(140,0,420) ); 
-   pwm.setPWM(12, 0, angleToPulse(140,0,420) );
-   pwm.setPWM(0, 0, angleToPulse(125,0,420) );
-   pwm.setPWM(4, 0, angleToPulse(120,0,420) );  
-   delay(1000);
-
-LinearCartesianPath(2, 7, 2, 5,-1, 4, -1, 7, path_1); 
+  delay(3000);
+  
+  pwm.setPWM(12, 0, angleToPulse(110,90,480) );
+  pwm.setPWM(8, 0, angleToPulse(110,90,480) );
+  pwm.setPWM(4, 0, angleToPulse(90,90,480) );
+  pwm.setPWM(0, 0, angleToPulse(90,90,480) );
+  
+//LinearCartesianPath(2, 7, 2, 5,-1, 4, -1, 7, path_1); 
+LinearCartesianPath(1, 7, 0, 6,-1, 5, -1, 7, path_1); 
 
 }
 
 void loop() {
-   pwm.setPWM(8, 0, angleToPulse(140,0,420) ); 
-   pwm.setPWM(12, 0, angleToPulse(140,0,420) );
-   pwm.setPWM(0, 0, angleToPulse(125,0,420) );
-   pwm.setPWM(4, 0, angleToPulse(120,0,420) );  
-   forward_motion();
+  
+  forward_motion();
+
 }
+
 
 
 int angleToPulse(int ang, int SERVOMIN, int SERVOMAX){
@@ -119,10 +87,11 @@ int angleToPulse(int ang, int SERVOMIN, int SERVOMAX){
   }
   
 void up(){
-   front_right(0,8);
-   front_left( 0,8);
-   rear_right( 0,8);
-   rear_left(  0,8);
+
+   front_right(0,7);
+   front_left( 0,7);
+   rear_right( 0,7);
+   rear_left(  0,7);
   }
 
 void forward_motion(void){
@@ -130,9 +99,9 @@ void forward_motion(void){
     for(int c = 0;c<40;c++){
       if(c2 == 39){c2 =0;}
       else{c2++;}
-      front_left( path_1[0][c],path_1[1][c]+0.5);
+      front_left( path_1[0][c],path_1[1][c]);
       rear_right( path_1[0][c],path_1[1][c]);
-      front_right( path_1[0][c2],path_1[1][c2]+0.5);
+      front_right( path_1[0][c2],path_1[1][c2]);
       rear_left( path_1[0][c2],path_1[1][c2]);
       }
 } 
@@ -168,6 +137,8 @@ void rear_right(double x,double y)
    s2 =  sqrt(1-pow(c2,2));
    q2 = atan2(s2,c2);
    q1 = atan2(y,x)-atan2(L2*s2,L1+(L2*c2));
+   q1 = q1*180/pi;
+   q2 = q2*180/pi;
    beta  = map(  q1 ,0, 180, 35,170);
    gamma = map(  q2 ,130, 0, 30,170);  
    pwm.setPWM(3, 0, angleToPulse(gamma,0,420) );  
@@ -180,8 +151,8 @@ void front_left(double x,double y)
    s2 =  sqrt(1-pow(c2,2));
    q2 = atan2(s2,c2);
    q1 = atan2(y,x)-atan2(L2*s2,L1+(L2*c2));
-   q1 = q1*180/pi+30;//la costante serve a tarare
-   q2 = q2*180/pi+20;//la costante serve a tarare
+   q1 = q1*180/pi+30;
+   q2 = q2*180/pi+20;
    beta  = map(  q1 ,180, 30, 35,170);
    gamma = map(  q2 ,0, 130, 30,170); 
    pwm.setPWM(15, 0, angleToPulse(gamma,0,420) );            
@@ -201,71 +172,6 @@ void rear_left(double x,double y)
    pwm.setPWM(7, 0, angleToPulse(gamma,0,420) );             
    pwm.setPWM(6, 0, angleToPulse(beta,0,675) );             
    }
-
-void test_leg_1(void){
-  //spalle centrate
-   pwm.setPWM(8, 0, angleToPulse(140,0,420) ); 
-   pwm.setPWM(12, 0, angleToPulse(140,0,420) );
-   pwm.setPWM(0, 0, angleToPulse(115,0,420) );
-   pwm.setPWM(4, 0, angleToPulse(115,0,420) );   
-  front_right(-6.5,6.5);
-  front_left( -6.5,6.5);
-  rear_right( -6.5,6.5);
-  rear_left(-6.5,6.5);
-  delay(1000);
-  front_right(6.5,6.5);
-  front_left( 6.5,6.5);
-  rear_right( 6.5,6.5);
-  rear_left(  6.5,6.5);
-  delay(1000);
-  return;
-  }    
-
-void test_leg_2(int timing)
-{
-   front_right(0,7);
-   front_left( 0,7);
-   rear_right( 0,9);
-   rear_left(  0,9);
-   delay(timing);
-   front_right(0,3);
-   front_left( 0,7);
-   rear_right( 0,9);
-   rear_left(  0,9);
-   delay(timing);
-   front_right(0,7);
-   front_left( 0,7);
-   rear_right( 0,9);
-   rear_left(  0,9);
-   delay(timing);   
-   front_right(0,7);
-   front_left( 0,3);
-   rear_right( 0,9);
-   rear_left(  0,9);
-   delay(timing);
-   front_right(0,7);
-   front_left( 0,7);
-   rear_right( 0,9);
-   rear_left(  0,9);
-   delay(timing);
-   front_right(0,7);
-   front_left( 0,7);
-   rear_right( 0,5);
-   rear_left(  0,9);
-   delay(timing);
-   front_right(0,7);
-   front_left( 0,7);
-   rear_right( 0,9);
-   rear_left(  0,9);
-   delay(timing);
-   front_right(0,7);
-   front_left( 0,7);
-   rear_right( 0,9);
-   rear_left(  0,5);
-   delay(timing);
-}
-
-
 
 void LinearCartesianPath(double x1, double y1, double x2, double y2,double x3, double y3, double x4, double y4, double traj[ROWS][COLS])
 {
