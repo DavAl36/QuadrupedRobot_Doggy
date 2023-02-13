@@ -4,7 +4,7 @@
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 
-void up(void);
+void up(double H);
 
 void backward_motion(void);
 void direct_kinematic(double alpha, double gamma, double beta, double* x, double* y, double* z );
@@ -35,8 +35,10 @@ int ang_2=45;
 double path_1[ROWS][COLS];
 
 
-  
+unsigned long working_time = 0;
+
 void setup() {
+
 
   pwm.begin();
   pwm.setPWMFreq(60);  
@@ -47,15 +49,46 @@ void setup() {
   pwm.setPWM(8, 0, angleToPulse(110,90,480) );
   pwm.setPWM(4, 0, angleToPulse(90,90,480) );
   pwm.setPWM(0, 0, angleToPulse(90,90,480) );
-  
-//LinearCartesianPath(2, 7, 2, 5,-1, 4, -1, 7, path_1); 
-LinearCartesianPath(1, 7, 0, 6,-1, 5, -1, 7, path_1); 
 
+  /*
+  //tilted to the left
+  pwm.setPWM(12, 0, angleToPulse(90,90,480) );
+  pwm.setPWM(8, 0, angleToPulse(110,90,480) );
+  pwm.setPWM(4, 0, angleToPulse(110,90,480) );
+  pwm.setPWM(0, 0, angleToPulse(90,90,480) );
+  //tilted to the left
+  pwm.setPWM(12, 0, angleToPulse(110,90,480) );
+  pwm.setPWM(8, 0, angleToPulse(130,90,480) );
+  pwm.setPWM(4, 0, angleToPulse(90,90,480) );
+  pwm.setPWM(0, 0, angleToPulse(70,90,480) );
+  */
+//LinearCartesianPath(2, 7, 2, 5,-1, 4, -1, 7, path_1); 
+//LinearCartesianPath(1, 7, 0, 6,-1, 5, -1, 7, path_1); 
+LinearCartesianPath(1, 11, 0, 10,-1, 9, -1, 11 , path_1); 
+
+up(5);
+delay(1000);
+up(6);
+delay(1000);
+up(7);
+delay(1000);
+up(8);
+delay(1000);
+up(9);
+delay(1000);
+up(10);
+delay(1000);
+up(11);
+delay(1000);
 }
 
 void loop() {
-  
-  forward_motion();
+  working_time = millis();
+
+  if(working_time < 16000){
+    forward_motion();
+  }
+
 
 }
 
@@ -86,12 +119,12 @@ int angleToPulse(int ang, int SERVOMIN, int SERVOMAX){
      return;
   }
   
-void up(){
+void up(double H){
 
-   front_right(0,7);
-   front_left( 0,7);
-   rear_right( 0,7);
-   rear_left(  0,7);
+   front_right(0,H);
+   front_left( 0,H);
+   rear_right( 0,H);
+   rear_left(  0,H);
   }
 
 void forward_motion(void){
@@ -110,9 +143,9 @@ void backward_motion(){
     for(int c = 40;c>0;c--){
       if(c2 == 0){c2 = 39;}
       else{c2--;}
-      front_left( path_1[0][c],path_1[1][c]+0.5);
+      front_left( path_1[0][c],path_1[1][c]);
       rear_right( path_1[0][c],path_1[1][c]);
-      front_right( path_1[0][c2],path_1[1][c2]+0.5);
+      front_right( path_1[0][c2],path_1[1][c2]);
       rear_left( path_1[0][c2],path_1[1][c2]);
       }
   }
@@ -120,21 +153,21 @@ void backward_motion(){
 void front_right(double x,double y)
    { 
    c2 =(pow(x,2)+pow(y,2)-(pow(L1,2)+pow(L2,2)))/(2*L1*L2);
-   s2 =  sqrt(1-pow(c2,2));
+   s2 = sqrt(1-pow(c2,2));
    q2 = atan2(s2,c2);
    q1 = atan2(y,x)-atan2(L2*s2,L1+(L2*c2));
    q1 = q1*180/pi;
    q2 = q2*180/pi;
    beta  = map(  q1 ,0, 180, 35,170);
    gamma = map(  q2 ,130, 0, 30,170);  
-   pwm.setPWM(11, 0, angleToPulse(gamma,0,420) ); 
+   pwm.setPWM(11, 0, angleToPulse(gamma+15,0,420) ); 
    pwm.setPWM(10, 0, angleToPulse(beta,0,675) );  
    }
    
 void rear_right(double x,double y)
    { 
    c2 =(pow(x,2)+pow(y,2)-(pow(L1,2)+pow(L2,2)))/(2*L1*L2);
-   s2 =  sqrt(1-pow(c2,2));
+   s2 = sqrt(1-pow(c2,2));
    q2 = atan2(s2,c2);
    q1 = atan2(y,x)-atan2(L2*s2,L1+(L2*c2));
    q1 = q1*180/pi;
@@ -148,7 +181,7 @@ void rear_right(double x,double y)
 void front_left(double x,double y)
    { 
    c2 =(pow(x,2)+pow(y,2)-(pow(L1,2)+pow(L2,2)))/(2*L1*L2);
-   s2 =  sqrt(1-pow(c2,2));
+   s2 = sqrt(1-pow(c2,2));
    q2 = atan2(s2,c2);
    q1 = atan2(y,x)-atan2(L2*s2,L1+(L2*c2));
    q1 = q1*180/pi+30;
@@ -162,7 +195,7 @@ void front_left(double x,double y)
 void rear_left(double x,double y)
    { 
    c2 =(pow(x,2)+pow(y,2)-(pow(L1,2)+pow(L2,2)))/(2*L1*L2);
-   s2 =  sqrt(1-pow(c2,2));
+   s2 = sqrt(1-pow(c2,2));
    q2 = atan2(s2,c2);
    q1 = atan2(y,x)-atan2(L2*s2,L1+(L2*c2));
    q1 = q1*180/pi;
