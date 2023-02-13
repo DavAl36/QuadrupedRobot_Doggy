@@ -24,6 +24,7 @@ void LinearCartesianPath(double x1, double y1, double x2, double y2,double x3, d
 const int L1 = 6.5;
 const int L2 = 6.5;
 const double pi = 3.14159;
+const double rad_to_degree = 180.0/pi;
 
 double alpha;
 double beta;
@@ -80,15 +81,22 @@ up(10);
 delay(1000);
 up(11);
 delay(1000);
+
 }
 
 void loop() {
   working_time = millis();
 
+  pwm.setPWM(12, 0, angleToPulse(110,90,480) );
+  pwm.setPWM(8, 0, angleToPulse(110,90,480) );
+  pwm.setPWM(4, 0, angleToPulse(90,90,480) );
+  pwm.setPWM(0, 0, angleToPulse(90,90,480) );
+
+  
   if(working_time < 16000){
     forward_motion();
   }
-
+  
 
 }
 
@@ -156,11 +164,11 @@ void front_right(double x,double y)
    s2 = sqrt(1-pow(c2,2));
    q2 = atan2(s2,c2);
    q1 = atan2(y,x)-atan2(L2*s2,L1+(L2*c2));
-   q1 = q1*180/pi;
-   q2 = q2*180/pi;
+   q1 = q1*rad_to_degree;
+   q2 = q2*rad_to_degree;
    beta  = map(  q1 ,0, 180, 35,170);
    gamma = map(  q2 ,130, 0, 30,170);  
-   pwm.setPWM(11, 0, angleToPulse(gamma+15,0,420) ); 
+   pwm.setPWM(11, 0, angleToPulse(gamma+15,0,420) ); // offset
    pwm.setPWM(10, 0, angleToPulse(beta,0,675) );  
    }
    
@@ -170,8 +178,8 @@ void rear_right(double x,double y)
    s2 = sqrt(1-pow(c2,2));
    q2 = atan2(s2,c2);
    q1 = atan2(y,x)-atan2(L2*s2,L1+(L2*c2));
-   q1 = q1*180/pi;
-   q2 = q2*180/pi;
+   q1 = q1*rad_to_degree;
+   q2 = q2*rad_to_degree;
    beta  = map(  q1 ,0, 180, 35,170);
    gamma = map(  q2 ,130, 0, 30,170);  
    pwm.setPWM(3, 0, angleToPulse(gamma,0,420) );  
@@ -184,12 +192,12 @@ void front_left(double x,double y)
    s2 = sqrt(1-pow(c2,2));
    q2 = atan2(s2,c2);
    q1 = atan2(y,x)-atan2(L2*s2,L1+(L2*c2));
-   q1 = q1*180/pi+30;
-   q2 = q2*180/pi+20;
-   beta  = map(  q1 ,180, 30, 35,170);
+   q1 = q1*rad_to_degree;
+   q2 = q2*rad_to_degree;
+   beta  = map(  q1 ,180, 0, 30,170);
    gamma = map(  q2 ,0, 130, 30,170); 
-   pwm.setPWM(15, 0, angleToPulse(gamma,0,420) );            
-   pwm.setPWM(14, 0, angleToPulse(beta,0,675) );             
+   pwm.setPWM(15, 0, angleToPulse(gamma+15,0,420) );  // offset          
+  pwm.setPWM(14, 0, angleToPulse(beta-10,0,675) );  // offset           
    }
    
 void rear_left(double x,double y)
@@ -198,8 +206,8 @@ void rear_left(double x,double y)
    s2 = sqrt(1-pow(c2,2));
    q2 = atan2(s2,c2);
    q1 = atan2(y,x)-atan2(L2*s2,L1+(L2*c2));
-   q1 = q1*180/pi;
-   q2 = q2*180/pi;
+   q1 = q1*rad_to_degree;
+   q2 = q2*rad_to_degree;
    beta  = map(  q1 ,180, 0, 30,170);
    gamma = map(  q2 ,0, 130, 30,170); 
    pwm.setPWM(7, 0, angleToPulse(gamma,0,420) );             
