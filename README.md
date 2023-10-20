@@ -1,5 +1,6 @@
 # QuadrupedRobot_Doggy
-This is Doggy, it is a quadruped robot realized with cheap components as Arduino, Sg90 (x12), PCA9685 and an external battery (5V, 2A max). In the future, I will add sensor components to improve the robot behaviour. 
+This is Doggy, it is a quadruped robot realized with cheap components as Arduino, Sg90 (x12), PCA9685 and an external battery (5V, 2A max). \
+In the future, I will add sensor components to improve the robot behaviour. 
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/114728905/195447836-b04efb03-ce78-48f2-825b-ea3866d645c4.jpg" width="300" />
@@ -17,7 +18,7 @@ The project goal is to provide a very simple robot with a very low price, in suc
 
 The robot mathematic model is based on the 2R Robotic Arm in 3D space: the main idea is to consider the quadruped legs as 4 human arms (independently controlled) and thanks to the end-effector linear trajectories we can realize complex movements.
 
-- Youtube link:https://youtu.be/w1J9UNxR37s
+- Youtube link:[https://youtu.be/w1J9UNxR37s](https://www.youtube.com/watch?v=w1J9UNxR37s&list=PLnHVd3wXFbM-tosFp9G9QmgAUowVRfOP3)
 - The robot 3D model has been inspired by this thingiverse project: https://www.thingiverse.com/thing:4274304
 
 I work in my spare time on this project and I hope to be able to open source it as soon as possible, stay tuned!
